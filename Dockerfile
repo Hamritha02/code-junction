@@ -4,11 +4,14 @@ FROM node:14 as build
 # Set the working directory in the container
 WORKDIR /app
 
-# Clone the Angular project from the GitHub repository
-RUN git clone https://github.com/Hamritha02/jira-clone-angular .
+# Copy the package.json and package-lock.json files to the container
+COPY package*.json ./
 
 # Install project dependencies
 RUN npm install
+
+# Copy the rest of your application code to the container
+COPY . .
 
 # Build the Angular application
 RUN npm run build -- --prod
