@@ -13,9 +13,6 @@ RUN npm install
 # Copy the rest of your application code to the container
 COPY . .
 
-# Build the Angular application
-RUN npm run build -- --prod
-
 # Use an official Nginx image as the final base image for serving the Angular app
 FROM nginx:alpine
 
@@ -25,5 +22,3 @@ COPY --from=build /app/dist/* /usr/share/nginx/html/
 # Expose port 80 (the default HTTP port)
 EXPOSE 80
 
-# Start the Nginx web server
-CMD ["nginx", "-g", "daemon off;"]
