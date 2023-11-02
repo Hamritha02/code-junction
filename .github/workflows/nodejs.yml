@@ -1,6 +1,6 @@
 name: Code junction build
 on: 
-  push:
+  push: 
     branches: 
       - master
   
