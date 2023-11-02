@@ -68,7 +68,7 @@ jobs:
         run: |
             git config --global user.name "Hamritha02"
             git config --global user.email "hamrithaanand02@gmail.com"
-            git add ./manifest/deployment.yaml
+            git add ./manifest_angular/deployment.yaml
             git commit -m "Update image tag with github.run no."
             git push origin main  
         env:
