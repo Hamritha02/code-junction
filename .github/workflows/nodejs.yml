@@ -40,6 +40,37 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
     - name: Build Container image
-      run: docker build -t ${{ secrets.DOCKER_REPO }}:${{ github.run_id }} .
+      run: docker build -t ${{ secrets.DOCKER_REPO }}:${{ github.run_number }} .
     - name: Publish Docker image
-      run: docker push ${{ secrets.DOCKER_REPO }}:${{ github.run_id }}
+      run: docker push ${{ secrets.DOCKER_REPO }}:${{ github.run_number }}
+  Deploy:
+    needs: Docker_push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: Hamritha02/Deployment   # Replace with the repository URL
+          ref: main 
+          token: ${{secrets.PAT_TOKEN }}
+   
+      - name: Modify Manifest
+        run: |
+            # Replace the image and tag in the manifest file
+             echo "GitHub SHA: ${{ github.run_number }}"
+             sed -i "s|hamritha817/angular:.*|hamritha817/angular:${{ github.run_number }}|" ./manifest_angular/deployment.yaml
+      - name: Debug - Show Git Status After Changes
+        run: git status
+        shell: bash
+ 
+
+      - name: Commit and Push Change
+        run: |
+            git config --global user.name "Hamritha02"
+            git config --global user.email "hamrithaanand02@gmail.com"
+            git add ./manifest/deployment.yaml
+            git commit -m "Update image tag with github.run no."
+            git push origin main  
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
