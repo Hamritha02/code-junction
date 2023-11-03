@@ -28,13 +28,15 @@ jobs:
         path: |
             dist
             package.json
-    - name: present working directory
-      run: |
-        pwd
-        ls
-        find -name dist
+    # - name: present working directory
+    #   run: |
+    #     pwd
+    #     ls
+    #     find -name dist
     - name:  Build Container image
       run: docker build -t ${{ secrets.DOCKER_REPO }}:${{ github.run_number }} .
+    - name: Publish Docker image
+      run: docker push ${{ secrets.DOCKER_REPO }}:${{ github.run_number }}
       
   # Docker_push:
   #   needs : build_and_test
