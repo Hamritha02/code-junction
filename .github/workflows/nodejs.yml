@@ -61,6 +61,7 @@ jobs:
     # - name: Publish Docker image
     #   run: docker push ${{ secrets.DOCKER_REPO }}:${{ github.run_number }}
   Deploy:
+    needs: build_and_test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
