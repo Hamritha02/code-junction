@@ -13,6 +13,9 @@ RUN npm install
 # Copy the rest of your application code to the container
 COPY . .
 
+# Build the Angular app
+RUN npm run build
+
 # Use an official Nginx image as the final base image for serving the Angular app
 FROM nginx:alpine
 
