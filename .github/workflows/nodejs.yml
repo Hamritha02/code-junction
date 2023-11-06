@@ -46,10 +46,10 @@ jobs:
       run: pipx install ggshield
     - name: detect secret
       run: |
-        ggshield auth login --method=GITGUARDIAN_API_TOKEN
+        ggshield auth login --method=token
         ggshield secret scan repo .
         env:
-          GITGUARDIAN_API_TOKEN: ${{ secrets.GITGUARDIAN_API_TOKEN }}
+          token: ${{ secrets.GITGUARDIAN_API_TOKEN }}
         # if cat "scan_result.json" | grep -q '"hashed_secret":'; then
         #   echo "Secrets were found during the scan:"
         #   cat "scan_result.json"
