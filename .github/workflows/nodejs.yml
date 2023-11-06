@@ -42,8 +42,8 @@ jobs:
     #     else
     #       echo "No secrets were found."
     #     fi
-    - name: Install whispher
-      run: $ pipx install ggshield
+    - name: Install ggshield
+      run: pipx install ggshield
     - name: detect secret
       run: |
         ggshield secret scan repo .
