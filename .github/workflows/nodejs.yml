@@ -12,7 +12,7 @@ jobs:
     
     - uses: actions/checkout@v2
       with:
-        repository: 'https://github.com/akveo/nebular'
+        repository: 'akveo/nebular'
     - name: Use Node.js 
       uses: actions/setup-node@v1
       with:
