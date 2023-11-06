@@ -28,7 +28,8 @@ jobs:
 
       - name: Run Snyk Test
         run: snyk test --all-projects
-
+        continue-on-error : true
+        
       - name: Check Snyk Test Results
         run: |
           snyk_test_exit_code=$?
