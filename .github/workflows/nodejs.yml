@@ -8,8 +8,6 @@ jobs:
   build_and_test:
 
     runs-on: ubuntu-latest
-
-    
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js 
@@ -19,17 +17,17 @@ jobs:
 
 
     - name: Install whispher
+      run: pip3 install detect-secrets
+    - name: detect secret
       run: |
-          pwd
-          ls
-          pip3 install whispers
-    - name: Scan current dir
-      run: whispers ./src
-    - name: scan output
-      run: |
-        touch config.yml
-        whispers --config config.yml ./src
-      
+        scan_result=$(detect-secrets scan > scan_result.json)
+        if cat "scan_result.json" | grep -q '"hashed_secret":'; then
+          echo "Secrets were found during the scan:"
+          cat "scan_result.json"
+          exit 1
+        else
+          echo "No secrets were found."
+        fi
     # - name: GitGuardian scan
     #   uses: GitGuardian/ggshield/actions/secret@main
     #   env:
