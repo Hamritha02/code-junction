@@ -32,13 +32,14 @@ jobs:
     #       echo "No secrets were found."
     #     fi
     - name: GitGuardian scan
-      uses: GitGuardian/ggshield/actions/secret@main
-      env:
-          GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
-          GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
-          GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+      uses: gitguardian/actions/scan@v2
+      # env:
+          # GITHUB_ACTION_REPOSITORY: "akveo/nebular"
+          # GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+          # GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+          # GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          # GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          # GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
     - run: npm install
     - run: npm run build
     # - name: Install CRDA
