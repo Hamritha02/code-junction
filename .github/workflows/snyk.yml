@@ -14,11 +14,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
+     
+      - uses: actions/checkout@v2
+      - name: Use Node.js 
+        uses: actions/setup-node@v1
         with:
-          java-version: 11
-          distribution: 'adopt'  # You can adjust the Java version as needed
+         node-version: 12.x
 
       - name: Install Snyk CLI
         run: npm install -g snyk@1.1237.0 
