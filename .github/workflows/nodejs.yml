@@ -49,7 +49,7 @@ jobs:
         ggshield auth login --method=token
         ggshield secret scan repo .
         env:
-          token: ${{ secrets.GITGUARDIAN_API_TOKEN }}
+          token: ${{ secrets.GITGUARDIAN_API_KEY }}
         # if cat "scan_result.json" | grep -q '"hashed_secret":'; then
         #   echo "Secrets were found during the scan:"
         #   cat "scan_result.json"
