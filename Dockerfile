@@ -20,7 +20,9 @@ RUN npm run build -- --prod
 FROM nginx:alpine
 
 # Copy the Angular build files to the Nginx web server directory
+
 COPY --from=build /app/dist/code-junction-tutorial /usr/share/nginx/html/
+
 
 # Expose port 80 (the default HTTP port)
 EXPOSE 80

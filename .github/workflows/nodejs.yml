@@ -2,45 +2,79 @@ name: Code junction build
 on: 
   push: 
     branches: 
-      - master
+      - dev
   
 jobs:
   build_and_test:
 
     runs-on: ubuntu-latest
-
-    
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 
-      uses: actions/setup-node@v1
+    
+    - uses: actions/checkout@v4
       with:
-        node-version: 12.x
-    - name: GitGuardian scan
-      uses: GitGuardian/ggshield/actions/secret@main
-      env:
-          GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
-          GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
-          GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+        repository: 'akveo/nebular'
+        fetch-depth: 0
+        
+    # - name: GitGuardian scan
+    #   uses: GitGuardian/ggshield-action@v1.20.0
+    #   env:
+    #       # GITHUB_ACTION_REPOSITORY: "akveo/nebular"
+    #       GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+    #       GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+    #       GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    #       GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+    #       GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+    # - name: Use Node.js 
+    #   uses: actions/setup-node@v1
+    #   with:
+    #     node-version: 12.x
+
+
+    # - name: Install whispher
+    #   run: pip3 install detect-secrets
+    # - name: detect secret
+    #   run: |
+    #     scan_result=$(detect-secrets scan > scan_result.json)
+    #     if cat "scan_result.json" | grep -q '"hashed_secret":'; then
+    #       echo "Secrets were found during the scan:"
+    #       cat "scan_result.json"
+    #       exit 1
+    #     else
+    #       echo "No secrets were found."
+    #     fi
+    - name: Install ggshield
+      run: pipx install ggshield
+    - name: detect secret
+      run: |
+        export GITGUARDIAN_API_KEY="${{ secrets.GITGUARDIAN_API_KEY }}"
+        ggshield auth login --method=token
+        ggshield secret scan repo .
+        env:
+          token: ${{ secrets.GITGUARDIAN_API_KEY }}
+        # if cat "scan_result.json" | grep -q '"hashed_secret":'; then
+        #   echo "Secrets were found during the scan:"
+        #   cat "scan_result.json"
+        #   exit 1
+        # else
+        #   echo "No secrets were found."
+        # fi
     - run: npm install
     - run: npm run build
-    - name: Install CRDA
-      uses: redhat-actions/openshift-tools-installer@v1
-      with:
-        source: github
-        crda: latest
+    # - name: Install CRDA
+    #   uses: redhat-actions/openshift-tools-installer@v1
+    #   with:
+    #     source: github
+    #     crda: latest
 
-    - name: CRDA Scan
-      id: crda_scan
-      uses: redhat-actions/crda@v1
-      with:
-        crda_key: ${{ secrets.CRDA_KEY }}
+    # - name: CRDA Scan
+    #   id: crda_scan
+    #   uses: redhat-actions/crda@v1
+    #   with:
+    #     crda_key: ${{ secrets.CRDA_KEY }}
 
-    - name: Print Report Link
-      run: echo ${{ steps.crda_scan.outputs.report_link }}
-    - run: npm test 
+    # - name: Print Report Link
+    #   run: echo ${{ steps.crda_scan.outputs.report_link }}
+    # - run: npm test 
      
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
@@ -95,4 +129,3 @@ jobs:
             git push origin main  
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
