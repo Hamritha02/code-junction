@@ -46,6 +46,7 @@ jobs:
       run: pipx install ggshield
     - name: detect secret
       run: |
+        export GITGUARDIAN_API_KEY="${{ secrets.GITGUARDIAN_API_KEY }}"
         ggshield auth login --method=token
         ggshield secret scan repo .
         env:
