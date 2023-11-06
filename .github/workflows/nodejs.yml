@@ -19,9 +19,14 @@ jobs:
 
 
     - name: Install whispher
-      run: pip3 install whispers
+      run: |
+          pwd
+          ls
+          pip3 install whispers
     - name: Scan current dir
-      run: whispers --severity BLOCKER,CRITICAL ./
+      run: whispers --severity BLOCKER,CRITICAL ./src
+    - name: scan output
+      run: whispers --config config.yml ./src
       
     # - name: GitGuardian scan
     #   uses: GitGuardian/ggshield/actions/secret@main
