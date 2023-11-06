@@ -10,9 +10,6 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
-# Copy the rest of your application code to the container
-COPY . .
-
 # Build the Angular app
 RUN npm run build
 
@@ -20,7 +17,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copy the Angular build files to the Nginx web server directory
-COPY ./dist/code-junction-tutorial /usr/share/nginx/html/
+COPY --from=build /app/dist/* /usr/share/nginx/html/
 
 # Expose port 80 (the default HTTP port)
 EXPOSE 80
