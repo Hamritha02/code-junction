@@ -1,8 +1,8 @@
 name: Code junction build
-on:  
+on: 
   push: 
     branches: 
-      - dev
+      - master
   
 jobs:
   build_and_test:
@@ -16,9 +16,30 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    
+    - name: GitGuardian scan
+      uses: GitGuardian/ggshield/actions/secret@main
+      env:
+          GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+          GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+          GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
     - run: npm install
     - run: npm run build
+    - name: Install CRDA
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        source: github
+        crda: latest
+
+    - name: CRDA Scan
+      id: crda_scan
+      uses: redhat-actions/crda@v1
+      with:
+        crda_key: ${{ secrets.CRDA_KEY }}
+
+    - name: Print Report Link
+      run: echo ${{ steps.crda_scan.outputs.report_link }}
     - run: npm test 
      
     - name: Upload artifact for deployment job
@@ -28,33 +49,13 @@ jobs:
         path: |
             dist
             package.json
-    # - name: present working directory
-    #   run: |
-    #     pwd
-    #     ls
-    #     find -name dist
-    
-    # - name: Login to DockerHub
-    #   uses: docker/login-action@v2
-    #   with:
-    #       username: ${{ secrets.DOCKER_USERNAME }}
-    #       password: ${{ secrets.DOCKER_TOKEN }}
-    # - name:  Build Container image
-    #   run: docker build -t ${{ secrets.DOCKER_REPO }}:${{ github.run_number }} .
-    # - name: Publish Docker image
-    #   run: docker push ${{ secrets.DOCKER_REPO }}:${{ github.run_number }}
-      
   Docker_push:
     needs : build_and_test
     runs-on: ubuntu-latest
     
     steps:
-     
-    - name: present working directory
-      run: |
-        pwd
-        ls
-        find -name dist
+    - name: Checkout
+      uses: actions/checkout@v3
     - name: Login to DockerHub
       uses: docker/login-action@v2
       with:
@@ -94,4 +95,3 @@ jobs:
             git push origin main  
         env:
           PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
