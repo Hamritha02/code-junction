@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
+# Copy the rest of your application code to the container
+COPY . .
+
 # Build the Angular app
 RUN npm run build -- --prod
 
