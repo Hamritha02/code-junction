@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build -- --prod
 
 # Use an official Nginx image as the final base image for serving the Angular app
-FROM nginx:alpine
+FROM nginx:1.25.3-alpine3.18
 
 # Copy the Angular build files to the Nginx web server directory
 COPY --from=build /app/dist/code-junction-tutorial /usr/share/nginx/html/
